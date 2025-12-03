@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Área | JAC Estética</title>
+    <link rel="stylesheet" href="Style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&family=Roboto:wght@300;400;700&display=swap');
+
+        /* Estilos específicos para a área do cliente */
+        .cliente-container {
+            max-width: 800px;
+            margin: 120px auto 60px; /* Margem superior para compensar o menu fixo */
+            padding: 20px;
+            text-align: center;
+        }
+
+        .busca-box {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+
+        .input-busca {
+            padding: 12px;
+            width: 70%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .btn-buscar {
+            padding: 12px 20px;
+            background-color: var(--cor-principal);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .lista-meus-agendamentos {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Card individual de agendamento */
+        .card-meu-agendamento {
+            background: white;
+            border-left: 5px solid var(--cor-destaque);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left;
+        }
+
+        .info h3 { margin-bottom: 5px; color: var(--cor-principal); }
+        .info p { margin: 0; color: #666; }
+
+        .acoes { display: flex; gap: 10px; }
+        
+        /* Reutilizando botões do admin com ajustes */
+        .btn-acao { padding: 8px 15px; border-radius: 5px; color: white; border: none; cursor: pointer; }
+        .btn-editar { background-color: #4CAF50; }
+        .btn-remover { background-color: #f44336; }
+
+        /* Estilos do Modal (Copiados do Admin para funcionar aqui também) */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-conteudo { background-color: white; margin: 10% auto; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px; text-align: left; }
+        .fechar-modal { float: right; font-size: 28px; cursor: pointer; }
+        .btn-salvar { background-color: var(--cor-destaque); color: white; width: 100%; padding: 12px; border: none; margin-top: 15px; cursor: pointer; font-weight: bold; }
+        .mensagem { display: none; padding: 10px; margin-top: 10px; border-radius: 5px; text-align: center;}
+        .mensagem.sucesso { background-color: #d4edda; color: #155724; }
+        .mensagem.erro { background-color: #f8d7da; color: #721c24; }
+
+        @media (max-width: 600px) {
+            .card-meu-agendamento { flex-direction: column; gap: 15px; text-align: center; }
+            .input-busca { width: 100%; margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <a href="Inicio.html"><img src="Imagens/Logo.png" alt="Logo JAC" class="logo"></a>
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a href="Inicio.html">Voltar ao Início</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="cliente-container">
+        <h1 class="titulo02 preto">Minha Área</h1>
+        <p class="texto-simples">Consulte e gerencie os seus agendamentos.</p>
+
+        <div class="busca-box">
+            <input type="text" id="campo-nome" class="input-busca" placeholder="Digite o seu nome completo...">
+            <button onclick="buscarAgendamentos()" class="btn-buscar">Buscar</button>
+        </div>
+
+        <div id="mensagem-topo" class="mensagem"></div>
+
+        <div id="lista-resultados" class="lista-meus-agendamentos">
+            </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-conteudo">
+            <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+            <h2 class="titulo02 preto" style="font-size: 1.5rem;">Alterar Agendamento</h2>
+            
+            <form id="form-edicao">
+                <input type="hidden" id="agendamento-id" name="id">
+                <div class="campo" style="margin-bottom: 15px;">
+                    <label>Nome:</label>
+                    <input type="text" id="edit-nome" name="nome" style="width:100%; padding:10px;" readonly>
+                </div>
+                <div class="campo" style="margin-bottom: 15px;">
+                    <label>Serviço:</label>
+                    <select id="edit-servico" name="servico" style="width:100%; padding:10px;">
+                        <option>Limpeza de Pele</option>
+                        <option>Massagem Relaxante</option>
+                        <option>Harmonização Facial</option>
+                        <option>Avaliação Gratuita</option>
+                    </select>
+                </div>
+                <div class="campo" style="margin-bottom: 15px;">
+                    <label>Nova Data:</label>
+                    <input type="date" id="edit-data" name="data" style="width:100%; padding:10px;" required>
+                </div>
+                <button type="submit" class="btn-salvar">Confirmar Alteração</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="copy"><p>Copyright ©2025 JAC Estética.</p></div>
+        </div>
+    </footer>
+
+    <script>
+        // Função para buscar agendamentos pelo nome
+        function buscarAgendamentos() {
+            const nome = document.getElementById('campo-nome').value;
+            const lista = document.getElementById('lista-resultados');
+            
+            if(nome.length < 3) {
+                alert("Por favor, digite pelo menos 3 letras.");
+                return;
+            }
+
+            lista.innerHTML = '<p>A procurar...</p>';
+
+            fetch(`buscar_cliente.php?nome=${nome}`)
+                .then(res => res.json())
+                .then(dados => {
+                    lista.innerHTML = '';
+                    
+                    if (dados.length === 0) {
+                        lista.innerHTML = '<p>Nenhum agendamento encontrado para este nome.</p>';
+                        return;
+                    }
+
+                    dados.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'card-meu-agendamento';
+                        div.innerHTML = `
+                            <div class="info">
+                                <h3>${item.servico}</h3>
+                                <p>Data: <strong>${formatarData(item.data)}</strong></p>
+                                <p style="font-size: 0.8rem; color:#999;">Agendado para: ${item.nome}</p>
+                            </div>
+                            <div class="acoes">
+                                <button class="btn-acao btn-editar" onclick="abrirModal(${item.id}, '${item.nome}', '${item.servico}', '${item.data}')">Alterar</button>
+                                <button class="btn-acao btn-remover" onclick="cancelar(${item.id})">Cancelar</button>
+                            </div>
+                        `;
+                        lista.appendChild(div);
+                    });
+                })
+                .catch(erro => {
+                    console.error(erro);
+                    lista.innerHTML = '<p>Erro ao buscar.</p>';
+                });
+        }
+
+        // Formata data YYYY-MM-DD para DD/MM/YYYY
+        function formatarData(data) {
+            const partes = data.split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        // Lógica de Cancelamento
+        function cancelar(id) {
+            if(confirm("Tem a certeza que deseja cancelar este agendamento?")) {
+                fetch('remover_agendamento.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `id=${id}`
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.sucesso) {
+                        alert("Agendamento cancelado!");
+                        buscarAgendamentos(); // Recarrega a lista
+                    } else {
+                        alert("Erro ao cancelar.");
+                    }
+                });
+            }
+        }
+
+        // Lógica do Modal de Edição
+        function abrirModal(id, nome, servico, data) {
+            document.getElementById('agendamento-id').value = id;
+            document.getElementById('edit-nome').value = nome;
+            document.getElementById('edit-servico').value = servico;
+            document.getElementById('edit-data').value = data;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Salvar Edição
+        document.getElementById('form-edicao').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('editar_agendamento.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.sucesso) {
+                    alert("Agendamento alterado com sucesso!");
+                    fecharModal();
+                    buscarAgendamentos(); // Atualiza a lista
+                } else {
+                    alert("Erro ao alterar: " + data.mensagem);
+                }
+            });
+        });
+
+        // Fecha modal ao clicar fora
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('modal')) {
+                fecharModal();
+            }
+        }
+    </script>
+
+</body>
+</html>

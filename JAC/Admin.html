@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo | JAC Estética</title>
+    <link rel="stylesheet" href="Style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&family=Roboto:wght@300;400;700&display=swap');
+        
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 60px 20px;
+        }
+        
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .btn-adicionar {
+            background-color: var(--cor-destaque);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            transition: 0.3s;
+        }
+        
+        .btn-adicionar:hover {
+            background-color: #b8962e;
+            transform: scale(1.05);
+        }
+        
+        .tabela-agendamentos {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .tabela-agendamentos table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .tabela-agendamentos th {
+            background-color: var(--cor-principal);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        
+        .tabela-agendamentos td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tabela-agendamentos tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .btn-acao {
+            padding: 6px 12px;
+            margin-right: 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        
+        .btn-editar {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .btn-editar:hover {
+            background-color: #45a049;
+        }
+        
+        .btn-remover {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .btn-remover:hover {
+            background-color: #da190b;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-conteudo {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .fechar-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+        
+        .fechar-modal:hover {
+            color: #000;
+        }
+        
+        .form-modal {
+            margin-top: 20px;
+        }
+        
+        .form-modal .campo {
+            margin-bottom: 15px;
+        }
+        
+        .form-modal label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--cor-principal);
+        }
+        
+        .form-modal input,
+        .form-modal select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: var(--fonte-texto);
+        }
+        
+        .btn-salvar {
+            background-color: var(--cor-destaque);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        
+        .btn-salvar:hover {
+            background-color: #b8962e;
+        }
+        
+        .mensagem {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .mensagem.sucesso {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .mensagem.erro {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <a href="Inicio.html">
+                <img src="Imagens/Logo.png" alt="Logo JAC" class="logo">
+            </a>
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a href="Inicio.html">Voltar ao Início</a></li>
+                <li><a href="#" onclick="logout()" class="btn-destaque">Sair</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1 class="titulo02 preto">Painel Administrativo</h1>
+            <p style="color: #666; margin-bottom: 20px;">Gerencie os agendamentos da JAC Estética</p>
+            <button class="btn-adicionar" onclick="abrirModalAdicionar()">+ Adicionar Novo Agendamento</button>
+        </div>
+
+        <div id="mensagem" class="mensagem"></div>
+
+        <div class="tabela-agendamentos">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Serviço</th>
+                        <th>Data</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="corpo-tabela">
+                    <!-- Os agendamentos serão carregados aqui via PHP -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal para Adicionar/Editar -->
+    <div id="modal" class="modal">
+        <div class="modal-conteudo">
+            <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+            <h2 id="titulo-modal" class="titulo02 preto" style="margin-bottom: 20px; font-size: 1.5rem;">Adicionar Agendamento</h2>
+            
+            <form id="form-agendamento" class="form-modal">
+                <input type="hidden" id="agendamento-id" name="id">
+                
+                <div class="campo">
+                    <label>Nome Completo:</label>
+                    <input type="text" id="nome" name="nome" required>
+                </div>
+                
+                <div class="campo">
+                    <label>Serviço Desejado:</label>
+                    <select id="servico" name="servico" required>
+                        <option value="Limpeza de Pele">Limpeza de Pele</option>
+                        <option value="Massagem Relaxante">Massagem Relaxante</option>
+                        <option value="Harmonização Facial">Harmonização Facial</option>
+                        <option value="Avaliação Gratuita">Avaliação Gratuita</option>
+                    </select>
+                </div>
+                
+                <div class="campo">
+                    <label>Data:</label>
+                    <input type="date" id="data" name="data" required>
+                </div>
+                
+                <button type="submit" class="btn-salvar">Salvar Agendamento</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="social">
+                <img src="Imagens/Instagram.png" alt="Instagram" width="40">
+                <span>@JAC.Estetica</span>
+            </div>
+            <div class="copy">
+                <p>Copyright ©2025 JAC Estética.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Carrega os agendamentos ao abrir a página
+        window.onload = function() {
+            carregarAgendamentos();
+        };
+
+        // Função para carregar agendamentos
+        function carregarAgendamentos() {
+            fetch('listar_agendamentos.php')
+                .then(response => response.json())
+                .then(data => {
+                    const corpoTabela = document.getElementById('corpo-tabela');
+                    corpoTabela.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        corpoTabela.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px; color: #999;">Nenhum agendamento encontrado</td></tr>';
+                        return;
+                    }
+                    
+                    data.forEach(agendamento => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${agendamento.id}</td>
+                            <td>${agendamento.nome}</td>
+                            <td>${agendamento.servico}</td>
+                            <td>${formatarData(agendamento.data)}</td>
+                            <td>
+                                <button class="btn-acao btn-editar" onclick="editarAgendamento(${agendamento.id})">Editar</button>
+                                <button class="btn-acao btn-remover" onclick="removerAgendamento(${agendamento.id})">Remover</button>
+                            </td>
+                        `;
+                        corpoTabela.appendChild(tr);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar agendamentos:', error);
+                    mostrarMensagem('Erro ao carregar agendamentos', 'erro');
+                });
+        }
+
+        // Função para formatar data
+        function formatarData(data) {
+            const partes = data.split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        // Abrir modal para adicionar
+        function abrirModalAdicionar() {
+            document.getElementById('titulo-modal').textContent = 'Adicionar Agendamento';
+            document.getElementById('form-agendamento').reset();
+            document.getElementById('agendamento-id').value = '';
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        // Editar agendamento
+        function editarAgendamento(id) {
+            fetch(`buscar_agendamento.php?id=${id}`)
+                .then(response => response.json())
+                .then(agendamento => {
+                    document.getElementById('titulo-modal').textContent = 'Editar Agendamento';
+                    document.getElementById('agendamento-id').value = agendamento.id;
+                    document.getElementById('nome').value = agendamento.nome;
+                    document.getElementById('servico').value = agendamento.servico;
+                    document.getElementById('data').value = agendamento.data;
+                    document.getElementById('modal').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar agendamento:', error);
+                    mostrarMensagem('Erro ao carregar dados do agendamento', 'erro');
+                });
+        }
+
+        // Remover agendamento
+        function removerAgendamento(id) {
+            if (confirm('Tem certeza que deseja remover este agendamento?')) {
+                fetch('remover_agendamento.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `id=${id}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        mostrarMensagem('Agendamento removido com sucesso!', 'sucesso');
+                        carregarAgendamentos();
+                    } else {
+                        mostrarMensagem('Erro ao remover agendamento', 'erro');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao remover:', error);
+                    mostrarMensagem('Erro ao remover agendamento', 'erro');
+                });
+            }
+        }
+
+        // Fechar modal
+        function fecharModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Submeter formulário
+        document.getElementById('form-agendamento').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const url = formData.get('id') ? 'editar_agendamento.php' : 'salvar_agendamento.php';
+            
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.sucesso) {
+                    mostrarMensagem(data.mensagem || 'Operação realizada com sucesso!', 'sucesso');
+                    fecharModal();
+                    carregarAgendamentos();
+                } else {
+                    mostrarMensagem(data.mensagem || 'Erro ao salvar agendamento', 'erro');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                mostrarMensagem('Erro ao processar solicitação', 'erro');
+            });
+        });
+
+        // Mostrar mensagem
+        function mostrarMensagem(texto, tipo) {
+            const mensagem = document.getElementById('mensagem');
+            mensagem.textContent = texto;
+            mensagem.className = `mensagem ${tipo}`;
+            mensagem.style.display = 'block';
+            
+            setTimeout(() => {
+                mensagem.style.display = 'none';
+            }, 5000);
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Deseja realmente sair do painel administrativo?')) {
+                window.location.href = 'Inicio.html';
+            }
+        }
+    </script>
+
+</body>
+</html>

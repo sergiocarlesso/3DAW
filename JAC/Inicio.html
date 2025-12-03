@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAC Estética | Beleza e Bem-Estar</title>
+    <link rel="stylesheet" href="Style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&family=Roboto:wght@300;400;700&display=swap');
+    </style>
+</head>
+<body>
+    
+    <header>
+        <div class="logo-container">
+            <img src="Imagens/Logo.png" alt="Logo JAC" class="logo">
+        </div>
+       <nav>
+            <ul class="menu">
+                <li><a href="#inicio">Início</a></li>
+                <li><a href="#servicos">Serviços</a></li>
+                <li><a href="Cliente.html">Minha Área</a></li> <li><a href="#agendamento" class="btn-destaque">Agendar</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="secao-imagem" id="inicio">
+        <div class="mascara-escura"></div> <div class="central">
+            <h1 class="titulo01">JAC Estética</h1>
+            <p class="intro">
+                Bem-vindo ao seu espaço dedicado ao bem-estar e à beleza.
+                Combinamos tecnologia avançada com o toque humano para que sinta a diferença.
+            </p>
+            <a href="#servicos" class="btn-cta">Conheça os Tratamentos</a>
+        </div>
+    </div>
+
+    <section class="secao-branca" id="servicos">
+        <h2 class="titulo02 preto">Nossos Serviços</h2>
+        
+        <div class="container-servicos">
+            
+            <div class="card-servico">
+                <h3>Limpeza de Pele</h3>
+                <p>Renove a sua pele com uma limpeza profunda, removendo impurezas e devolvendo o brilho natural.</p>
+                <a href="Limpeza.html" style="color: var(--cor-destaque); font-weight: bold; text-decoration: none; margin-top: 10px; display: block;">Saiba mais →</a>
+            </div>
+
+            <div class="card-servico">
+                <h3>Massagem Relaxante</h3>
+                <p>Alivie o stress do dia-a-dia com técnicas manuais que promovem o relaxamento total do corpo.</p>
+                <a href="Massagem.html" style="color: var(--cor-destaque); font-weight: bold; text-decoration: none; margin-top: 10px; display: block;">Saiba mais →</a>
+            </div>
+
+            <div class="card-servico">
+                <h3>Harmonização Facial</h3>
+                <p>Realce os seus traços naturais com procedimentos minimamente invasivos e seguros.</p>
+                <a href="Harmonizacao.html" style="color: var(--cor-destaque); font-weight: bold; text-decoration: none; margin-top: 10px; display: block;">Saiba mais →</a>
+            </div>
+
+        </div> 
+    </section>
+
+    <section class="secao-preta" id="agendamento">
+        <h2 class="titulo02">Agende a sua visita</h2>
+        <p class="texto-simples">Preencha os dados abaixo e entraremos em contacto para confirmar.</p>
+        
+        <form class="formulario" action="salvar_agendamento.php" method="POST">
+            <div class="campo">
+                <label>Nome Completo:</label>
+                <input type="text" name="nome" placeholder="Seu nome" required>
+            </div>
+            <div class="campo">
+                <label>Serviço Desejado:</label>
+                <select name="servico" required>
+                    <option>Limpeza de Pele</option>
+                    <option>Massagem Relaxante</option>
+                    <option>Harmonização Facial</option>
+                    <option>Avaliação Gratuita</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>Melhor Data:</label>
+                <input type="date" name="data" required>
+            </div>
+            <button type="submit" class="btn-enviar">Solicitar Agendamento</button>
+        </form>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="social">
+                <img src="Imagens/Instagram.png" alt="Instagram" width="40">
+                <span>@JAC.Estetica</span>
+            </div>
+            <div class="copy">
+                <p>Copyright ©2025 JAC Estética.</p>
+                <p>Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="Script.js"></script>
+</body>
+</html>
